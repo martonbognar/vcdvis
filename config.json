@@ -1,0 +1,28 @@
+{
+    "file_path": "/home/mici/programming/sancus-main/sancus-core/core/sim/rtl_sim/run/tb_openMSP430.vcd",
+    "clk_signal": "mclk",
+    "delimiter": "exec_done",
+    "signals": [
+        {
+            "name": "eu_dmem_en",
+            "color": "orange",
+            "label": "data memory"
+        },
+        {
+            "name": ["fe_pmem_en", "eu_pmem_en"],
+            "color": "green",
+            "label": "program memory"
+        },
+        {
+            "name": "eu_per_en",
+            "color": "blue",
+            "label": "peripheral"
+        },
+        {
+            "name": "inst_full",
+            "label": "instruction",
+            "color": "lightgray",
+            "type": "ascii"
+        }
+    ]
+}
