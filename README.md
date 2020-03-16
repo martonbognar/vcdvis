@@ -1,8 +1,9 @@
 # vcdvis
 
 Convert your value change dumps into TikZ figures or visualize them in ASCII.
-
 The tool is clock cycle based, async signals will not work properly.
+
+vdcvis is still very much a work in progress, feel free to submit issues or pull requests!
 
 ## Usage
 
