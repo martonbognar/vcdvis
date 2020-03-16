@@ -43,7 +43,7 @@ For a complete example, see the [config file](config.json) included in this repo
 
 Given the following waveform file:
 
-![]()
+![](https://i.imgur.com/qEUzd5q.png)
 
 We can issue the following command (using the default `config.json` provided in the repo):
 
@@ -54,11 +54,11 @@ $ ./vcdvis.py 20 latex -f /tmp/vcd/jmp_single.vcd > output.tex
 This means that we want to plot the execution during last 20 clock cycles in the simulation.
 In this case, the output will look like the following:
 
-![]()
+![](https://i.imgur.com/8tz2juR.png)
 
 If we omit the delimiter signal from the config file, we will get the following output (watch out, you might run off at the side of the page):
 
-![]()
+![](https://i.imgur.com/V82va9C.png)
 
 Alternatively, if we want to plot the execution in ASCII to get a quick look, we can do:
 
