@@ -31,11 +31,14 @@ if __name__ == "__main__":
     cfg = parse_config(config_file=args.config, file_arg=args.file)
     cfg["cycles"] = args.cycles
 
+    signals = [Signal([cfg["clk_signal"]])]
+
     for signal in cfg["signals"]:
         if isinstance(signal["name"], str):
             signal["name"] = [signal["name"]]
-    signals = [Signal([cfg["clk_signal"]])] + [Signal(signal["name"], signal["label"], signal["color"])
-                                               for signal in cfg["signals"]] + [Signal([cfg["delimiter"]])]
+        signals.append(Signal(signal["name"], signal["label"], signal["color"], signal.get("type", "boolean")))
+
+    signals.append(Signal([cfg["delimiter"]]))
 
     vcd_parser.parse_vcd(cfg["file_path"], signals)
 

@@ -25,6 +25,9 @@ class Signal:
     def get_color(self):
         return self.color
 
+    def get_type(self):
+        return self.type
+
     def name_match(self, name):
         return name in self.names
 
@@ -44,8 +47,8 @@ class Signal:
     def internal_merge(self):
         char = '0'
         for val in self.separate_values.values():
-            if val == '1':
-                char = '1'
+            if val != '0':
+                char = val
         self.values.append(char)
         for iden in self.separate_values:
             self.separate_values[iden] = None

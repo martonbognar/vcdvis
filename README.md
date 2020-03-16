@@ -1,3 +1,3 @@
-# vcdvis 0.1
+# vcdvis
 
-Readme coming soon.
+Convert your value change dumps into TikZ figures or visualize them in ASCII.
