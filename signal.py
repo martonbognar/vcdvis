@@ -2,13 +2,12 @@ from enum import Enum
 
 
 class SignalType(Enum):
-    BOOLEAN = "boolean"
-    HEX = "hex"
+    WIRE = "wire"
     ASCII = "ascii"
 
 
 class Signal:
-    def __init__(self, names: [str], label: str = None, color: str = "black", type: str = "boolean"):
+    def __init__(self, names: [str], label: str = None, color: str = "black", type: str = "wire"):
         self.names = names
         self.type = SignalType(type)
         self.label = label
@@ -32,49 +31,38 @@ class Signal:
         return name in self.names
 
     def set_id(self, iden: str):
-        self.separate_values[iden] = None
-
-    def buffer_empty(self):
-        empty = True
-        for iden in self.separate_values:
-            if self.separate_values[iden] is not None:
-                empty = False
-        return empty
+        self.separate_values[iden] = []
 
     def id_match(self, iden):
         return iden in self.separate_values
 
-    def internal_merge(self):
-        char = '0'
-        for val in self.separate_values.values():
-            if val != '0':
-                char = val
-        self.values.append(char)
-        for iden in self.separate_values:
-            self.separate_values[iden] = None
-
     def append_value(self, iden: str, value: str):
-        if len(self.separate_values) == 1:
-            self.values.append(value)
-        else:
-            self.separate_values[iden] = value
+        self.separate_values[iden].append(value)
 
     def get_values_size(self):
-        return len(self.values) + (0 if self.buffer_empty() else 1)
+        return max(len(value) for value in self.separate_values.values())
 
     def get_last_n_values(self, n: int):
-        return self.values[-n:]
+        values = [value[-n:] for value in self.separate_values.values()]
+        buf = []
+        for i in range(n):
+            candidate = '0'
+            for value in values:
+                if value[i] != '0':
+                    candidate = value[i]
+            buf.append(candidate)
+        return buf
 
     def pad_to(self, max_length):
-        if not self.buffer_empty():
-            self.internal_merge()
-        if self.get_values_size() == max_length:
-            return
-        try:
-            self.values.append(self.values[-1])
-            if self.get_values_size() != max_length:
-                raise AssertionError(
-                    "Failed consistency check for {}".format(self.get_label()))
-        except IndexError:
-            raise AssertionError(
-                "{} not initialized properly".format(self.name))
+        for values in self.separate_values.values():
+            if len(values) == max_length:
+                continue
+            else:
+                try:
+                    values.append(values[-1])
+                    if len(values) != max_length:
+                        raise AssertionError(
+                            "Failed consistency check for {}".format(self.get_label()))
+                except IndexError:
+                    raise AssertionError(
+                        "{} not initialized properly".format(self.name))
