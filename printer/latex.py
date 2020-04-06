@@ -21,17 +21,18 @@ def print_ascii(arr, offset, color) -> str:
 
 
 def print_wire(arr, offset, color) -> str:
-    x = 0
     output = ""
     output += "\\draw [help lines,lightgray,line width=0.01mm] (0,{}) grid ({},{});\n".format(
         offset,
         len(arr),
         offset + 1)
-    for elem in arr:
+    for ix, elem in enumerate(arr):
         y = offset + 1 if elem == '1' else offset
         output += "\\draw [{3},ultra thick] ({0},{2}) -- ({1},{2});\n".format(
-            x, x + 1, y, color)
-        x += 1
+            ix, ix + 1, y, color)
+        if ix != 0 and elem != arr[ix - 1]:
+            output += "\\draw [{3},ultra thick] ({0},{1}) -- ({0},{2});\n".format(
+            ix, offset, offset + 1, color)
     return output
 
 
