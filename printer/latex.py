@@ -41,6 +41,8 @@ def figure(signals, total_cycles, start_cycle, end_cycle) -> str:
     output = ""
     output += "\\begin{figure}[h]\n"
     output += "\\begin{tikzpicture}[yscale=0.5]\n"
+    for i in range(total_cycles):
+        output += "\\node at ({0}, {1}) {{\\footnotesize {2}}};\n".format(i * 2 + 1, len(signals) * 2, i + 1)
     for i in range(len(signals)):
         if signals[i].get_type() == signal.SignalType.WIRE:
             output += print_wire(signals[i].get_last_n_values(total_cycles)

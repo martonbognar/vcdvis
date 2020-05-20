@@ -46,7 +46,7 @@ def gather_signals(config):
         )
     if "delimiter" in cfg:
         signals.append(Signal([cfg["delimiter"]]))
-    return signals
+    return list(reversed(signals))
 
 
 if __name__ == "__main__":
