@@ -12,7 +12,7 @@ def get_parser():
     parser = argparse.ArgumentParser(
         description='Visualize a VCD waveform as ASCII or convert to a tikz figure.')
     parser.add_argument(
-        'cycles', type=int, help='the number of clock cycles AT THE END of the simulation to include in the output')
+        'cycles', type=float, help='the number of clock cycles AT THE END of the simulation to include in the output')
     parser.add_argument('output', help='the output type',
                         choices=['latex', 'ascii', 'both'])
     parser.add_argument('-c', dest="config", default="config.json",
@@ -22,12 +22,12 @@ def get_parser():
     return parser.parse_args()
 
 
-def parse_config(config_file: str, file_arg: str, cycles: int):
+def parse_config(config_file: str, file_arg: str, cycles: float):
     with open(config_file) as file:
         cfg = json.load(file)
         if file_arg is not None:
             cfg["file_path"] = file_arg
-        cfg["cycles"] = cycles * 2
+        cfg["cycles"] = int(cycles * 2)
         return cfg
 
 

@@ -25,6 +25,12 @@ optional arguments:
                       file)
 ```
 
+Tip: if the simulation ends in the middle of a cycle (only one half of a cycle
+is included at the end), you can provide a decimal `cycles` argument to offset
+this effect so that the visualization doesn't also start in the middle of a
+cycle, e.g. `57.5` if you want to visualize 57 cycles but a half extra cycle is
+included at the end of the VCD file.
+
 ## config.json
 
 The following fields can be set in the config file:
