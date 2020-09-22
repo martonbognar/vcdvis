@@ -4,17 +4,29 @@ import signal
 
 
 def set_ids(file: io.TextIOWrapper, signals: [signal.Signal]):
+    upscope_str = r'\$scope (?P<type>\w+) (?P<name>\w+) \$end'
+    downscope_str = r'\$upscope \$end'
+    var_str = r'\$var (?P<type>\w+) \d+ (?P<id>\S+) (?P<name>\w+)( \[\d+:0\])? \$end'
+
+    scopes = []
     for line in file:
-        match = re.match(
-            r'\$var (?P<type>\w+) \d+ (?P<id>\S+) (?P<name>\w+)( \[\d+:0\])? \$end', line)
-        if match:
-            name = match.group('name')
+        var_match = re.match(var_str, line)
+        if var_match:
+            name = ".".join(scopes + [var_match.group('name')])
             for signal in signals:
                 if signal.name_match(name):
-                    signal.set_id(match.group('id'))
+                    signal.set_id(var_match.group('id'))
         else:
-            if line.startswith("$dumpvars"):
-                return
+            upscope_match = re.match(upscope_str, line)
+            if upscope_match:
+                scopes.append(upscope_match.group('name'))
+            else:
+                downscope_match = re.match(downscope_str, line)
+                if downscope_match:
+                    scopes = scopes[:-1]
+                else:
+                    if line.startswith("$dumpvars"):
+                        return
 
 
 def load_values(file: io.TextIOWrapper, signals: [signal.Signal]):
@@ -30,7 +42,7 @@ def load_values(file: io.TextIOWrapper, signals: [signal.Signal]):
                         signal.append_value(iden, match.group('value'))
 
 
-def consistency_check(signals: [(str, signal.Signal)]):
+def consistency_check(signals: [signal.Signal]):
     max_length = max([signal.get_values_size() for signal in signals])
     for signal in signals:
         signal.pad_to(max_length)
@@ -39,5 +51,6 @@ def consistency_check(signals: [(str, signal.Signal)]):
 def parse_vcd(vcd_file: str, signals: [signal.Signal]):
     with open(vcd_file) as file:
         set_ids(file, signals)
+        # TODO: error if no id found for a signal
         load_values(file, signals)
         consistency_check(signals)

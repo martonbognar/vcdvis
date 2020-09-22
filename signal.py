@@ -65,4 +65,4 @@ class Signal:
                             "Failed consistency check for {}".format(self.get_label()))
                 except IndexError:
                     raise AssertionError(
-                        "{} not initialized properly".format(self.name))
+                        "{} not initialized properly".format(self.names))

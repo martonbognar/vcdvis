@@ -1,25 +1,25 @@
 {
-    "file_path": "/home/mici/programming/sancus-main/sancus-core/core/sim/rtl_sim/run/tb_openMSP430.vcd",
-    "clk_signal": "mclk",
-    "delimiter": "exec_done",
+    "file_path": "/home/marton/vrased-analysis/vrased/scripts/tb_openMSP430.vcd",
+    "clk_signal": "tb_openMSP430.mclk",
+    "delimiter": "tb_openMSP430.dut.exec_done",
     "signals": [
         {
-            "name": "eu_dmem_en",
+            "name": "tb_openMSP430.dut.mem_backbone_0.eu_dmem_en",
             "color": "orange",
             "label": "data memory"
         },
         {
-            "name": ["fe_pmem_en", "eu_pmem_en"],
+            "name": ["tb_openMSP430.dut.mem_backbone_0.fe_pmem_en", "tb_openMSP430.dut.mem_backbone_0.eu_pmem_en"],
             "color": "green",
             "label": "program memory"
         },
         {
-            "name": "eu_per_en",
+            "name": "tb_openMSP430.dut.mem_backbone_0.eu_per_en",
             "color": "blue",
             "label": "peripheral"
         },
         {
-            "name": "inst_full",
+            "name": "tb_openMSP430.inst_full",
             "label": "instruction",
             "color": "lightgray",
             "type": "ascii"
