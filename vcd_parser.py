@@ -33,16 +33,17 @@ def set_ids(file: io.TextIOWrapper, signals: [signal.Signal]):
 
 
 def load_values(file: io.TextIOWrapper, signals: [signal.Signal]):
+    timestamp = 0
     for line in file:
         if line.startswith('#'):
-            consistency_check(signals)
+            timestamp = int(line[1:])
         else:
             match = re.match(r'[b]?(?P<value>([\d]+|x))[ ]?(?P<id>\S+)$', line)
             if match:
                 iden = match.group('id')
                 for signal in signals:
                     if signal.id_match(iden):
-                        signal.append_value(iden, match.group('value'))
+                        signal.append_value(iden, timestamp, match.group('value'))
 
 
 def consistency_check(signals: [signal.Signal]):

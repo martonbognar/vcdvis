@@ -13,6 +13,7 @@ class Signal:
         self.label = label
         self.values = []
         self.separate_values = {}
+        self.value_store = {}
         self.color = color
 
     def get_label(self):
@@ -31,19 +32,16 @@ class Signal:
         return name in self.names
 
     def set_id(self, iden: str):
-        self.separate_values[iden] = []
+        self.value_store[iden] = []
 
     def get_ids(self):
-        return list(self.separate_values.keys())
+        return list(self.value_store.keys())
 
     def id_match(self, iden):
-        return iden in self.separate_values
+        return iden in self.value_store
 
-    def append_value(self, iden: str, value: str):
-        self.separate_values[iden].append(value)
-
-    def get_values_size(self):
-        return max(len(value) for value in self.separate_values.values())
+    def append_value(self, iden: str, timestamp: int, value: str):
+        self.value_store[iden].append((timestamp, value))
 
     def get_last_n_values(self, n: int):
         values = [value[-n:] for value in self.separate_values.values()]
@@ -69,3 +67,6 @@ class Signal:
                 except IndexError:
                     raise AssertionError(
                         "{} not initialized properly".format(self.names))
+
+class CompoundSignal(Signal):
+    pass
