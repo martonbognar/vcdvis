@@ -9,7 +9,7 @@ def draw_line(arr: [str]):
 
 
 def draw(cycles: int, signals: [signal.Signal]):
-    # TODO: justify with max character count
+    max_len = max(len(signal.get_label()) for signal in signals) + 4
     for signal in signals:
-        print("{}{}".format(signal.get_label().ljust(20),
+        print("{}{}".format(signal.get_label().ljust(max_len),
                             draw_line(signal.get_last_n_values(cycles))))

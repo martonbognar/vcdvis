@@ -26,6 +26,9 @@ def set_ids(file: io.TextIOWrapper, signals: [signal.Signal]):
                     scopes = scopes[:-1]
                 else:
                     if line.startswith("$dumpvars"):
+                        for signal in signals:
+                            if signal.get_ids() == []:
+                                raise ValueError("A signal (" + signal.get_label() + ") has no ids")
                         return
 
 
@@ -51,6 +54,5 @@ def consistency_check(signals: [signal.Signal]):
 def parse_vcd(vcd_file: str, signals: [signal.Signal]):
     with open(vcd_file) as file:
         set_ids(file, signals)
-        # TODO: error if no id found for a signal
         load_values(file, signals)
         consistency_check(signals)

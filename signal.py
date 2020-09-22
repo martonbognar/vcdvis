@@ -33,6 +33,9 @@ class Signal:
     def set_id(self, iden: str):
         self.separate_values[iden] = []
 
+    def get_ids(self):
+        return list(self.separate_values.keys())
+
     def id_match(self, iden):
         return iden in self.separate_values
 
