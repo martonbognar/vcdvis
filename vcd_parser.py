@@ -15,7 +15,7 @@ def set_ids(file: io.TextIOWrapper, signals: [signal.Signal]):
             name = ".".join(scopes + [var_match.group('name')])
             for signal in signals:
                 if signal.name_match(name):
-                    signal.set_id(var_match.group('id'))
+                    signal.set_id(name, var_match.group('id'))
         else:
             upscope_match = re.match(upscope_str, line)
             if upscope_match:
@@ -27,7 +27,7 @@ def set_ids(file: io.TextIOWrapper, signals: [signal.Signal]):
                 else:
                     if line.startswith("$dumpvars"):
                         for signal in signals:
-                            if signal.get_ids() == []:
+                            if signal.get_id() == None:
                                 raise ValueError("A signal (" + signal.get_label() + ") has no ids")
                         return
 
@@ -46,14 +46,7 @@ def load_values(file: io.TextIOWrapper, signals: [signal.Signal]):
                         signal.append_value(iden, timestamp, match.group('value'))
 
 
-def consistency_check(signals: [signal.Signal]):
-    max_length = max([signal.get_values_size() for signal in signals])
-    for signal in signals:
-        signal.pad_to(max_length)
-
-
 def parse_vcd(vcd_file: str, signals: [signal.Signal]):
     with open(vcd_file) as file:
         set_ids(file, signals)
         load_values(file, signals)
-        consistency_check(signals)

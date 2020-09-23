@@ -1,10 +1,10 @@
 import signal
 
 
-def draw_line(arr: [str]):
+def draw_line(arr: [(int, str)]):
     buf = ""
     for char in arr:
-        buf += ' ' if char == '0' else '█'
+        buf += ' ' if char[1] == '0' else '█'
     return buf
 
 
