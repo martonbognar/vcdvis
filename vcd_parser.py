@@ -3,17 +3,20 @@ import re
 from signal import Signal, SignalStore
 
 
-def set_ids(file: io.TextIOWrapper, signals: [Signal]):
+def set_ids(file: io.TextIOWrapper, signals: SignalStore):
     upscope_str = r'\$scope (?P<type>\w+) (?P<name>\w+) \$end'
     downscope_str = r'\$upscope \$end'
     var_str = r'\$var (?P<type>\w+) \d+ (?P<id>\S+) (?P<name>\w+)( \[\d+:0\])? \$end'
+    timescale_inline_str = r'\$timescale (?P<value>\d+)(?P<unit>\w+)'
+
+    timescale_on_next = False
 
     scopes = []
     for line in file:
         var_match = re.match(var_str, line)
         if var_match:
             name = ".".join(scopes + [var_match.group('name')])
-            for signal in signals:
+            for signal in signals.combined():
                 if signal.name_match(name):
                     signal.set_id(name, var_match.group('id'))
         else:
@@ -25,11 +28,22 @@ def set_ids(file: io.TextIOWrapper, signals: [Signal]):
                 if downscope_match:
                     scopes = scopes[:-1]
                 else:
-                    if line.startswith("$dumpvars"):
-                        for signal in signals:
-                            if signal.get_id() == None:
-                                raise ValueError("A signal (" + signal.get_label() + ") has no ids")
-                        return
+                    timescale_inline_match = re.match(timescale_inline_str, line)
+                    if timescale_inline_match or timescale_on_next:
+                        # update timescale
+                        if timescale_on_next:
+                            timescale_on_next = False
+                            timescale_inline_match = re.match(r'\s*(?P<value>\d+)(?P<unit>\w+)', line)
+                        signals.update_timescale(int(timescale_inline_match.group('value')), timescale_inline_match.group('unit'))
+                    else:
+                        if line.startswith("$timescale"):
+                            timescale_on_next = True
+                        else:
+                            if line.startswith("$dumpvars"):
+                                for signal in signals.combined():
+                                    if signal.get_id() == None:
+                                        raise ValueError("A signal (" + signal.get_label() + ") has no ids")
+                                return
 
 
 def load_values(file: io.TextIOWrapper, signals: [Signal]):
@@ -48,5 +62,5 @@ def load_values(file: io.TextIOWrapper, signals: [Signal]):
 
 def parse_vcd(vcd_file: str, signals: SignalStore):
     with open(vcd_file) as file:
-        set_ids(file, signals.combined())
+        set_ids(file, signals)
         load_values(file, signals.combined())

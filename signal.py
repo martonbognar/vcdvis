@@ -95,10 +95,40 @@ class CompoundSignal(Signal):
 
 
 class SignalStore:
-    def __init__(self, clk: Signal, delimiter: Signal = None, signals: [Signal] = []):
+    def __init__(self, clk: Signal, delimiter: Signal = None, signals: [Signal] = [], timescale: int = 0, timescale_unit: str = ""):
         self.clk = clk
         self.delimiter = delimiter
         self.signals = signals
+        self.timescale = timescale
+        self.timescale_unit = timescale_unit  # s, ms, us, ns, ps, or fs
+
+    def update_timescale(self, timescale: int, unit: str):
+        self.timescale = timescale
+        self.timescale_unit = unit
 
     def combined(self):
         return [self.clk] + self.signals + [self.delimiter] if self.delimiter else []
+
+    def get_last_n(self, n: int):
+        clk_values = self.clk.get_last_n_values(n)
+        start = clk_values[0][0]
+        end = clk_values[-1][0]
+        step = clk_values[1][0] - start
+        print(start, end)
+        matrix = [(signal.get_label(), signal.get_values_between(start, end)) for signal in self.combined()]
+        for (label, values) in matrix:
+            time = start
+            index = 0
+            result = []
+            while time <= end:
+                if index < len(values) and values[index][0] == time:
+                    result.append(values[index][1])
+                    index += 1
+                else:
+                    # TODO: initial value
+                    if result != []:
+                        result.append(result[-1])
+                    else:
+                        result.append('0')
+                time += step
+            yield (label, result)

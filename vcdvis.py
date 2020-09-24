@@ -8,10 +8,6 @@ import printer.ascii as PA
 import printer.latex as PL
 
 
-TIMESCALE = 0
-# s, ms, us, ns, ps, or fs
-
-
 def get_parser():
     parser = argparse.ArgumentParser(
         description='Visualize a VCD waveform as ASCII or convert to a tikz figure.',
