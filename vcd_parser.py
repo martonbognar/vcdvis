@@ -1,9 +1,9 @@
 import io
 import re
-import signal
+from signal import Signal, SignalStore
 
 
-def set_ids(file: io.TextIOWrapper, signals: [signal.Signal]):
+def set_ids(file: io.TextIOWrapper, signals: [Signal]):
     upscope_str = r'\$scope (?P<type>\w+) (?P<name>\w+) \$end'
     downscope_str = r'\$upscope \$end'
     var_str = r'\$var (?P<type>\w+) \d+ (?P<id>\S+) (?P<name>\w+)( \[\d+:0\])? \$end'
@@ -32,7 +32,7 @@ def set_ids(file: io.TextIOWrapper, signals: [signal.Signal]):
                         return
 
 
-def load_values(file: io.TextIOWrapper, signals: [signal.Signal]):
+def load_values(file: io.TextIOWrapper, signals: [Signal]):
     timestamp = 0
     for line in file:
         if line.startswith('#'):
@@ -46,7 +46,7 @@ def load_values(file: io.TextIOWrapper, signals: [signal.Signal]):
                         signal.append_value(iden, timestamp, match.group('value'))
 
 
-def parse_vcd(vcd_file: str, signals: [signal.Signal]):
+def parse_vcd(vcd_file: str, signals: SignalStore):
     with open(vcd_file) as file:
-        set_ids(file, signals)
-        load_values(file, signals)
+        set_ids(file, signals.combined())
+        load_values(file, signals.combined())

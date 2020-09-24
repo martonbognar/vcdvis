@@ -3,18 +3,20 @@
 import json
 import argparse
 import vcd_parser
-from signal import Signal, CompoundSignal
+from signal import Signal, CompoundSignal, SignalStore
 import printer.ascii as PA
 import printer.latex as PL
 
 
 TIMESCALE = 0
+# s, ms, us, ns, ps, or fs
 
 
 def get_parser():
     parser = argparse.ArgumentParser(
         description='Visualize a VCD waveform as ASCII or convert to a tikz figure.',
     )
+
     parser.add_argument(
         'cycles',
         type=float,
@@ -36,6 +38,7 @@ def get_parser():
         dest='file',
         help='the VCD file to parse (default: taken from the config file)',
     )
+
     return parser.parse_args()
 
 
@@ -48,8 +51,10 @@ def parse_config(config_file: str, file_arg: str, cycles: float):
         return cfg
 
 
-def gather_signals(config):
-    signals = [Signal(cfg['clk_signal'])]
+def gather_signals(config) -> SignalStore:
+    clk = Signal(cfg['clk_signal'])
+    delimiter = Signal(cfg['delimiter']) if 'delimiter' in cfg else None
+    signals = []
     for signal in cfg['signals']:
         if isinstance(signal['name'], str):
             # creating a simple signal
@@ -71,9 +76,7 @@ def gather_signals(config):
                     color=signal['color'],
                 )
             )
-    if 'delimiter' in cfg:
-        signals.append(Signal(name=cfg['delimiter']))
-    return list(reversed(signals))
+    return SignalStore(clk=clk, delimiter=delimiter, signals=signals)
 
 
 if __name__ == '__main__':
@@ -90,5 +93,4 @@ if __name__ == '__main__':
     if args.output in ['ascii', 'both']:
         PA.draw(cfg['cycles'], signals)
     if args.output in ['latex', 'both']:
-        delimiter = cfg.get('delimiter', '')
-        [print(f) for f in PL.tikz(cfg['cycles'], delimiter, signals)]
+        [print(f) for f in PL.tikz(cfg['cycles'], signals)]

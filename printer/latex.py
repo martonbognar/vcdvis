@@ -57,23 +57,21 @@ def figure(signals, total_cycles, start_cycle, end_cycle) -> str:
     return output
 
 
-def tikz(cycles: int, delimiter: str, signals: [signal.Signal]) -> [str]:
+def tikz(cycles: int, signals: signal.SignalStore) -> [str]:
     last_print_cycle = 0
     figures = []
-    delimiter_signals = [
-        signal for signal in signals if signal.name_match(delimiter)]
-    if len(delimiter_signals) == 1:
-        values = delimiter_signals[0].get_last_n_values(cycles)
+    if signals.delimiter:
+        values = signals.delimiter.get_last_n_values(cycles)
     else:
         values = ['0'] * cycles
     delimited = True
     for i in range(cycles):
         if (values[i] == '1' and values[i-1] == '1' and not delimited):
-            figures.append(figure(signals, cycles, last_print_cycle, i + 1))
+            figures.append(figure(signals.combined(), cycles, last_print_cycle, i + 1))
             last_print_cycle = i + 1
             delimited = True
         else:
             delimited = False
     if last_print_cycle != cycles:
-        figures.append(figure(signals, cycles, last_print_cycle, cycles))
+        figures.append(figure(signals.combined(), cycles, last_print_cycle, cycles))
     return figures

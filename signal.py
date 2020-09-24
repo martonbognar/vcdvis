@@ -6,7 +6,6 @@ class SignalType(Enum):
     ASCII = "ascii"
 
 
-
 class Signal:
     def __init__(self, name: str, type_in: str = "wire", label: str = None, color: str = "black"):
         self.name = name
@@ -44,7 +43,7 @@ class Signal:
         return self.values[-n:]
 
     def get_values_between(self, start: int, end: int):
-        [(timestamp, value) for (timestamp, value) in self.values if start <= timestamp <= end]
+        return [(timestamp, value) for (timestamp, value) in self.values if start <= timestamp <= end]
 
 
 
@@ -93,3 +92,13 @@ class CompoundSignal(Signal):
     def get_values_between(self, start: int, end: int):
         value_matrix = [signal.get_values_between(start, end) for signal in self.signals]
         return value_matrix[0]
+
+
+class SignalStore:
+    def __init__(self, clk: Signal, delimiter: Signal = None, signals: [Signal] = []):
+        self.clk = clk
+        self.delimiter = delimiter
+        self.signals = signals
+
+    def combined(self):
+        return [self.clk] + self.signals + [self.delimiter] if self.delimiter else []
