@@ -1,4 +1,4 @@
-import signal
+from signal import SignalType, SignalStore
 
 
 def print_ascii(arr, offset, color) -> str:
@@ -44,10 +44,10 @@ def figure(signals, total_cycles, start_cycle, end_cycle) -> str:
     for i in range(total_cycles):
         output += "\\node at ({0}, {1}) {{\\footnotesize {2}}};\n".format(i * 2 + 1, len(signals) * 2, i + 1)
     for i in range(len(signals)):
-        if signals[i].get_type() == signal.SignalType.WIRE:
+        if signals[i].get_type() == SignalType.WIRE:
             output += print_wire(signals[i].get_last_n_values(total_cycles)
                                  [start_cycle:end_cycle], i * 2, signals[i].get_color())
-        elif signals[i].get_type() == signal.SignalType.ASCII:
+        elif signals[i].get_type() == SignalType.ASCII:
             output += print_ascii(signals[i].get_last_n_values(total_cycles)
                                   [start_cycle:end_cycle], i * 2, signals[i].get_color())
         output += "\\node [left] at (0,{}) {{{}}};\n".format(
@@ -57,7 +57,7 @@ def figure(signals, total_cycles, start_cycle, end_cycle) -> str:
     return output
 
 
-def tikz(cycles: int, signals: signal.SignalStore) -> [str]:
+def tikz(cycles: int, signals: SignalStore) -> [str]:
     last_print_cycle = 0
     figures = []
     if signals.delimiter:

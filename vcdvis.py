@@ -6,6 +6,7 @@ import vcd_parser
 from signal import Signal, CompoundSignal, SignalStore
 import printer.ascii as PA
 import printer.latex as PL
+from timestamp import Timestamp
 
 
 def get_parser():
@@ -14,14 +15,27 @@ def get_parser():
     )
 
     parser.add_argument(
-        'cycles',
-        type=float,
-        help='the number of clock cycles AT THE END of the simulation to include in the output',
-    )
-    parser.add_argument(
         'output',
         help='the output type',
         choices=['latex', 'ascii', 'both'],
+    )
+
+    window = parser.add_mutually_exclusive_group(required=True)
+    window.add_argument(
+        '-cycles',
+        type=float,
+        help='the number of clock cycles AT THE END of the simulation to include in the output',
+    )
+    window.add_argument(
+        '-start_tick',
+        dest='start',
+        help='the starting tick from the simulation to be included, e.g. 120ns',
+    )
+
+    parser.add_argument(
+        '-end_tick',
+        dest='end',
+        help='the final tick from the simulation to be included, e.g. 180ns',
     )
     parser.add_argument(
         '-c',
@@ -36,15 +50,6 @@ def get_parser():
     )
 
     return parser.parse_args()
-
-
-def parse_config(config_file: str, file_arg: str, cycles: float):
-    with open(config_file) as file:
-        cfg = json.load(file)
-        if file_arg is not None:
-            cfg['file_path'] = file_arg
-        cfg['cycles'] = int(cycles * 2)
-        return cfg
 
 
 def gather_signals(config) -> SignalStore:
@@ -74,19 +79,31 @@ def gather_signals(config) -> SignalStore:
             )
     return SignalStore(clk=clk, delimiter=delimiter, signals=signals)
 
-
 if __name__ == '__main__':
     args = get_parser()
 
-    cfg = parse_config(
-        config_file=args.config,
-        file_arg=args.file,
-        cycles=args.cycles,
-    )
+    with open(args.config) as file:
+        cfg = json.load(file)
+    if args.file is not None:
+        cfg['file_path'] = args.file
+
     signals = gather_signals(cfg)
     vcd_parser.parse_vcd(cfg['file_path'], signals)
 
+    if args.start is not None and args.end is not None:
+        start = Timestamp.from_string(args.start)
+        end = Timestamp.from_string(args.end)
+
+    if args.cycles is not None:
+        cycles = int(args.cycles * 2)
+        values = signals.clk.get_last_n_values(cycles)
+        start = values[0][0]
+        end = values[-1][0]
+
+    if start is None or end is None:
+        raise ValueError("No window provided")
+
     if args.output in ['ascii', 'both']:
-        PA.draw(cfg['cycles'], signals)
+        PA.draw(signals, start, end)
     if args.output in ['latex', 'both']:
-        [print(f) for f in PL.tikz(cfg['cycles'], signals)]
+        [print(f) for f in PL.tikz(signals, start, end)]

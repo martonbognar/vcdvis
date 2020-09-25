@@ -1,6 +1,7 @@
 import io
 import re
 from signal import Signal, SignalStore
+from timestamp import Timestamp, Unit
 
 
 def set_ids(file: io.TextIOWrapper, signals: SignalStore):
@@ -34,7 +35,7 @@ def set_ids(file: io.TextIOWrapper, signals: SignalStore):
                         if timescale_on_next:
                             timescale_on_next = False
                             timescale_inline_match = re.match(r'\s*(?P<value>\d+)(?P<unit>\w+)', line)
-                        signals.update_timescale(int(timescale_inline_match.group('value')), timescale_inline_match.group('unit'))
+                        signals.update_timescale(Timestamp(int(timescale_inline_match.group('value')), Unit(timescale_inline_match.group('unit'))))
                     else:
                         if line.startswith("$timescale"):
                             timescale_on_next = True
@@ -46,16 +47,16 @@ def set_ids(file: io.TextIOWrapper, signals: SignalStore):
                                 return
 
 
-def load_values(file: io.TextIOWrapper, signals: [Signal]):
-    timestamp = 0
+def load_values(file: io.TextIOWrapper, signals: SignalStore):
+    timestamp = Timestamp(0, Unit.SECOND)
     for line in file:
         if line.startswith('#'):
-            timestamp = int(line[1:])
+            timestamp = signals.get_timescale() * int(line[1:])
         else:
             match = re.match(r'[b]?(?P<value>([\d]+|x))[ ]?(?P<id>\S+)$', line)
             if match:
                 iden = match.group('id')
-                for signal in signals:
+                for signal in signals.combined():
                     if signal.id_match(iden):
                         signal.append_value(iden, timestamp, match.group('value'))
 
@@ -63,4 +64,4 @@ def load_values(file: io.TextIOWrapper, signals: [Signal]):
 def parse_vcd(vcd_file: str, signals: SignalStore):
     with open(vcd_file) as file:
         set_ids(file, signals)
-        load_values(file, signals.combined())
+        load_values(file, signals)
