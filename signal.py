@@ -43,7 +43,16 @@ class Signal:
         return self.values[-n:]
 
     def get_values_between(self, start: int, end: int):
-        return [(timestamp, value) for (timestamp, value) in self.values if start <= timestamp <= end]
+        results = []
+        value_before = None
+        for (timestamp, value) in self.values:
+            if timestamp < start:
+                value_before = value
+            elif timestamp <= end:
+                results.append((timestamp, value))
+            else:
+                break
+        return {'before': value_before, 'values': results}
 
 
 
@@ -114,21 +123,20 @@ class SignalStore:
         start = clk_values[0][0]
         end = clk_values[-1][0]
         step = clk_values[1][0] - start
-        print(start, end)
         matrix = [(signal.get_label(), signal.get_values_between(start, end)) for signal in self.combined()]
-        for (label, values) in matrix:
+        for (label, v) in matrix:
             time = start
             index = 0
             result = []
             while time <= end:
-                if index < len(values) and values[index][0] == time:
-                    result.append(values[index][1])
+                if index < len(v['values']) and v['values'][index][0] == time:
+                    result.append(v['values'][index][1])
                     index += 1
                 else:
                     # TODO: initial value
                     if result != []:
                         result.append(result[-1])
                     else:
-                        result.append('0')
+                        result.append(v['before'])
                 time += step
             yield (label, result)
