@@ -1,9 +1,12 @@
 from enum import Enum
+from functools import reduce
 from timestamp import Timestamp, Unit
+from value import BoolValue, AsciiValue
 
 
 class SignalType(Enum):
-    WIRE = "wire"
+    WIRE  = "wire"
+    HEX   = "hex"
     ASCII = "ascii"
 
 
@@ -38,7 +41,11 @@ class Signal:
         return self.id == iden
 
     def append_value(self, iden: str, timestamp: Timestamp, value: str):
-        self.values.append((timestamp, value))
+        if self.type == SignalType.WIRE:
+            val = BoolValue(value)
+        if self.type == SignalType.ASCII:
+            val = AsciiValue(value)
+        self.values.append((timestamp, val))
 
     def get_last_n_values(self, n: int):
         return self.values[-n:]
@@ -69,7 +76,9 @@ class Signal:
 class CompoundSignal(Signal):
     def __init__(self, signals: [Signal], label: str = None, color: str = "black"):
         self.signals = signals
-        # TODO: check if all signals have the same type
+        for signal in signals:
+            if signal.get_type() != SignalType.WIRE:
+                raise ValueError("Only wire signals can be merged! " + signal.get_label())
         self.label = label
         self.color = color
 
@@ -106,13 +115,11 @@ class CompoundSignal(Signal):
 
     def get_last_n_values(self, n: int):
         value_matrix = [signal.get_last_n_values(n) for signal in self.signals]
-        # todo merge
-        return value_matrix[0]
+        return [reduce(lambda l, r: l.merge(r), row) for row in value_matrix]
 
     def get_values_between(self, start: Timestamp, end: Timestamp, step: Timestamp):
         value_matrix = [signal.get_values_between(start, end, step) for signal in self.signals]
-        # todo merge
-        return value_matrix[0]
+        return [reduce(lambda l, r: l.merge(r), row) for row in value_matrix]
 
 
 class SignalStore:

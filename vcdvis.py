@@ -62,7 +62,7 @@ def gather_signals(config) -> SignalStore:
             signals.append(
                 Signal(
                     name=signal['name'],
-                    type_in=signal.get('type', 'wire'),
+                    type_in=signal.get('type', 'wire'),  # todo: make sure that supplied type is in line with actual type
                     label=signal['label'],
                     color=signal['color'],
                 )
