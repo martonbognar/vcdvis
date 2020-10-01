@@ -1,8 +1,10 @@
 import string
+import timestamp
 
 class Value:
-    def __init__(self, value):
+    def __init__(self, value, timestamp):
         self.value = value
+        self.timestamp = timestamp
 
     def __eq__(self, other):
         return self.value == other.value
@@ -12,6 +14,9 @@ class Value:
 
     def merge(self, other):
         raise NotImplementedError
+
+    def get_timestamp(self):
+        return self.timestamp
 
 
 class ValueArray:
@@ -32,7 +37,8 @@ class ValueArray:
 
 
 class BoolValue(Value):
-    def __init__(self, value):
+    def __init__(self, value, timestamp = timestamp.t_0):
+        self.timestamp = timestamp
         if value == 'x':
             self.value = 0
             return
@@ -46,11 +52,12 @@ class BoolValue(Value):
         return '█' if self.value == 1 else ' '
 
     def merge(self, other):
-        return BoolValue(self.value | other.value)
+        return BoolValue(self.value | other.value, self.timestamp)  # todo: ?
 
 
 class AsciiValue(Value):
-    def __init__(self, value):
+    def __init__(self, value, timestamp = timestamp.t_0):
+        self.timestamp = timestamp
         if value == 'x':
             self.value = 0
             return

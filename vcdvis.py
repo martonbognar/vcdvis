@@ -97,8 +97,8 @@ if __name__ == '__main__':
     if args.cycles is not None:
         cycles = int(args.cycles * 2)
         values = signals.clk.get_last_n_values(cycles)
-        start = values[0][0]
-        end = values[-1][0]
+        start = values[0].get_timestamp()
+        end = values[-1].get_timestamp()
 
     if start is None or end is None:
         raise ValueError("No window provided")

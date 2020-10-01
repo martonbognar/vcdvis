@@ -42,29 +42,30 @@ class Signal:
 
     def append_value(self, iden: str, timestamp: Timestamp, value: str):
         if self.type == SignalType.WIRE:
-            val = BoolValue(value)
+            val = BoolValue(value, timestamp)
         if self.type == SignalType.ASCII:
-            val = AsciiValue(value)
-        self.values.append((timestamp, val))
+            val = AsciiValue(value, timestamp)
+        self.values.append(val)
 
     def get_last_n_values(self, n: int):
         if self.type == SignalType.ASCII:
             return AsciiArray(self.values[-n:])
         if self.type == SignalType.WIRE:
             return BoolArray(self.values[-n:])
+        raise ValueError("Incorrect type")
 
     def get_values_between(self, start: Timestamp, end: Timestamp, step: Timestamp):
         index = 0
-        initial_value = self.values[0][1]
-        while index < len(self.values) and self.values[index][0] < start:
-            initial_value = self.values[index][1]
+        initial_value = self.values[0]
+        while index < len(self.values) and self.values[index].get_timestamp() < start:
+            initial_value = self.values[index]
             index += 1
 
         result = []
         time = start
         while time <= end:
-            if index < len(self.values) and self.values[index][0] <= time:
-                result.append(self.values[index][1])
+            if index < len(self.values) and self.values[index].get_timestamp() <= time:
+                result.append(self.values[index])
                 index += 1
             else:
                 if result != []:
@@ -155,9 +156,9 @@ class SignalStore:
         return self.timescale
 
     def combined(self):
-        return [self.clk] + self.signals + [self.delimiter] if self.delimiter else []
+        return [self.clk] + self.signals + ([self.delimiter] if self.delimiter else [])
 
     def get_values_between(self, start: Timestamp, end: Timestamp):
         clk_values = self.clk.get_last_n_values(2)
-        step = clk_values[1][0] - clk_values[0][0]
-        return [(signal.get_label(), signal.get_values_between(start, end, step)) for signal in self.combined()]
+        step = clk_values[1].get_timestamp() - clk_values[0].get_timestamp()
+        return [(signal, signal.get_values_between(start, end, step)) for signal in self.combined()]

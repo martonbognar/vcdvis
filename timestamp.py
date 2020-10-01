@@ -60,3 +60,5 @@ class Timestamp:
     def __mul__(self, number: int):
         value = self.value * number
         return Timestamp(value, self.unit)
+
+t_0 = Timestamp(0, Unit.SECOND)
