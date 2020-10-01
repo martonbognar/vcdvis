@@ -1,16 +1,15 @@
 from signal import SignalStore
 from timestamp import Timestamp
+from value import Value, ValueArray
 
 
-def draw_line(arr: [str]) -> str:
-    buf = ""
-    for value in arr:
-        buf += str(value)[:1]
-    return buf
+def draw_signal(label: str, values: ValueArray, padding: int):
+    value_str = " |" + values.print_ascii() + "|"
+    print("{}{}".format(label.rjust(padding), value_str))
 
 
 def draw(signals: SignalStore, start: Timestamp, end: Timestamp):
-    max_label_len = max(len(signal.get_label()) for signal in signals.combined()) + 4
+    max_len = max(len(signal.get_label()) for signal in signals.combined())
+    padding = max_len + 2
     for (label, values) in signals.get_values_between(start, end):
-        print("{}{}".format(label.ljust(max_label_len),
-                            draw_line(values)))
+        draw_signal(label, values, padding)

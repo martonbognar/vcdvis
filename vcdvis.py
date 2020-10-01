@@ -106,4 +106,4 @@ if __name__ == '__main__':
     if args.output in ['ascii', 'both']:
         PA.draw(signals, start, end)
     if args.output in ['latex', 'both']:
-        [print(f) for f in PL.tikz(signals, start, end)]
+        PL.draw(signals, start, end)

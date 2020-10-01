@@ -1,7 +1,7 @@
 from enum import Enum
 from functools import reduce
 from timestamp import Timestamp, Unit
-from value import BoolValue, AsciiValue
+from value import BoolValue, AsciiValue, AsciiArray, BoolArray
 
 
 class SignalType(Enum):
@@ -48,7 +48,10 @@ class Signal:
         self.values.append((timestamp, val))
 
     def get_last_n_values(self, n: int):
-        return self.values[-n:]
+        if self.type == SignalType.ASCII:
+            return AsciiArray(self.values[-n:])
+        if self.type == SignalType.WIRE:
+            return BoolArray(self.values[-n:])
 
     def get_values_between(self, start: Timestamp, end: Timestamp, step: Timestamp):
         index = 0
@@ -69,7 +72,11 @@ class Signal:
                 else:
                     result.append(initial_value)
             time += step
-        return result
+
+        if self.type == SignalType.ASCII:
+            return AsciiArray(result)
+        if self.type == SignalType.WIRE:
+            return BoolArray(result)
 
 
 
@@ -121,7 +128,7 @@ class CompoundSignal(Signal):
 
         for i in range(cycle_count):
             merged.append(reduce(lambda l, r: l.merge(r), [row[i] for row in value_matrix]))
-        return merged
+        return BoolArray(merged)
 
     def get_values_between(self, start: Timestamp, end: Timestamp, step: Timestamp):
         value_matrix = [signal.get_values_between(start, end, step) for signal in self.signals]
@@ -131,7 +138,7 @@ class CompoundSignal(Signal):
 
         for i in range(cycle_count):
             merged.append(reduce(lambda l, r: l.merge(r), [row[i] for row in value_matrix]))
-        return merged
+        return BoolArray(merged)
 
 
 class SignalStore:

@@ -1,4 +1,6 @@
 from signal import SignalType, SignalStore
+from timestamp import Timestamp
+from value import Value
 
 
 def print_ascii(arr, offset, color) -> str:
@@ -36,8 +38,7 @@ def print_wire(arr, offset, color) -> str:
     return output
 
 
-def figure(signals, total_cycles, start_cycle, end_cycle) -> str:
-    cycle_delta = end_cycle - start_cycle
+def figure(signals: [(str, [Value])], total_cycles, start_cycle, end_cycle) -> str:
     output = ""
     output += "\\begin{figure}[h]\n"
     output += "\\begin{tikzpicture}[yscale=0.5]\n"
@@ -45,11 +46,9 @@ def figure(signals, total_cycles, start_cycle, end_cycle) -> str:
         output += "\\node at ({0}, {1}) {{\\footnotesize {2}}};\n".format(i * 2 + 1, len(signals) * 2, i + 1)
     for i in range(len(signals)):
         if signals[i].get_type() == SignalType.WIRE:
-            output += print_wire(signals[i].get_last_n_values(total_cycles)
-                                 [start_cycle:end_cycle], i * 2, signals[i].get_color())
+            output += print_wire(signals[i][1][start_cycle:end_cycle], i * 2, signals[i].get_color())
         elif signals[i].get_type() == SignalType.ASCII:
-            output += print_ascii(signals[i].get_last_n_values(total_cycles)
-                                  [start_cycle:end_cycle], i * 2, signals[i].get_color())
+            output += print_ascii(signals[i][1][start_cycle:end_cycle], i * 2, signals[i].get_color())
         output += "\\node [left] at (0,{}) {{{}}};\n".format(
             i * 2 + 0.5, signals[i].get_label().replace('_', '\\_'))
     output += "\\end{tikzpicture}\n"
@@ -57,21 +56,26 @@ def figure(signals, total_cycles, start_cycle, end_cycle) -> str:
     return output
 
 
-def tikz(cycles: int, signals: SignalStore) -> [str]:
+def draw(signals: SignalStore, start: Timestamp, end: Timestamp):
+    combined = signals.get_values_between(start, end)
+    cycles = len(combined[0][1])
     last_print_cycle = 0
     figures = []
     if signals.delimiter:
-        values = signals.delimiter.get_last_n_values(cycles)
+        delimiter_label = signals.delimiter.get_label()
+        for (label, values) in combined:
+            if label == delimiter_label:
+                delimiter_values = signals.delimiter.get_last_n_values(cycles)
     else:
-        values = ['0'] * cycles
+        delimiter_values = ['0'] * cycles
     delimited = True
     for i in range(cycles):
-        if (values[i] == '1' and values[i-1] == '1' and not delimited):
-            figures.append(figure(signals.combined(), cycles, last_print_cycle, i + 1))
+        if (delimiter_values[i] == '1' and delimiter_values[i-1] == '1' and not delimited):
+            figures.append(figure(combined, cycles, last_print_cycle, i + 1))
             last_print_cycle = i + 1
             delimited = True
         else:
             delimited = False
     if last_print_cycle != cycles:
-        figures.append(figure(signals.combined(), cycles, last_print_cycle, cycles))
+        figures.append(figure(combined, cycles, last_print_cycle, cycles))
     return figures
