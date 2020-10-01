@@ -14,7 +14,7 @@ class BoolValue(Value):
         self.value = int_value
 
     def __str__(self):
-        return str(self.value)
+        return '█' if self.value == 1 else ' '
 
     def merge(self, other):
         return BoolValue(self.value | other.value)

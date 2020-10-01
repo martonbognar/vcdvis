@@ -5,7 +5,7 @@ from timestamp import Timestamp
 def draw_line(arr: [str]) -> str:
     buf = ""
     for value in arr:
-        buf += str(value)
+        buf += str(value)[:1]
     return buf
 
 

@@ -115,11 +115,23 @@ class CompoundSignal(Signal):
 
     def get_last_n_values(self, n: int):
         value_matrix = [signal.get_last_n_values(n) for signal in self.signals]
-        return [reduce(lambda l, r: l.merge(r), row) for row in value_matrix]
+
+        cycle_count = len(value_matrix[0])
+        merged = []
+
+        for i in range(cycle_count):
+            merged.append(reduce(lambda l, r: l.merge(r), [row[i] for row in value_matrix]))
+        return merged
 
     def get_values_between(self, start: Timestamp, end: Timestamp, step: Timestamp):
         value_matrix = [signal.get_values_between(start, end, step) for signal in self.signals]
-        return [reduce(lambda l, r: l.merge(r), row) for row in value_matrix]
+
+        cycle_count = len(value_matrix[0])
+        merged = []
+
+        for i in range(cycle_count):
+            merged.append(reduce(lambda l, r: l.merge(r), [row[i] for row in value_matrix]))
+        return merged
 
 
 class SignalStore:
