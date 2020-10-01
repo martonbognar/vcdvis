@@ -1,5 +1,7 @@
 import string
+
 import timestamp
+
 
 class Value:
     def __init__(self, value, timestamp):
@@ -37,7 +39,7 @@ class ValueArray:
 
 
 class BoolValue(Value):
-    def __init__(self, value, timestamp = timestamp.t_0):
+    def __init__(self, value, timestamp=timestamp.t_0):
         self.timestamp = timestamp
         if value == 'x':
             self.value = 0
@@ -56,7 +58,7 @@ class BoolValue(Value):
 
 
 class AsciiValue(Value):
-    def __init__(self, value, timestamp = timestamp.t_0):
+    def __init__(self, value, timestamp=timestamp.t_0):
         self.timestamp = timestamp
         if value == 'x':
             self.value = 0

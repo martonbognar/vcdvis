@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
-import json
 import argparse
-import vcd_parser
-from signal import Signal, CompoundSignal, SignalStore
+import json
+
 import printer.ascii as PA
 import printer.latex as PL
+import vcd_parser
+from signal import Signal, CompoundSignal, SignalStore
 from timestamp import Timestamp
 
 
@@ -62,7 +63,8 @@ def gather_signals(config) -> SignalStore:
             signals.append(
                 Signal(
                     name=signal['name'],
-                    type_in=signal.get('type', 'wire'),  # todo: make sure that supplied type is in line with actual type
+                    type_in=signal.get('type', 'wire'),
+                    # todo: make sure that supplied type is in line with actual type
                     label=signal['label'],
                     color=signal['color'],
                 )
@@ -78,6 +80,7 @@ def gather_signals(config) -> SignalStore:
                 )
             )
     return SignalStore(clk=clk, delimiter=delimiter, signals=signals)
+
 
 if __name__ == '__main__':
     args = get_parser()

@@ -55,7 +55,7 @@ def figure(signals: [(Signal, [Value])], total_cycles, start_cycle, end_cycle) -
             output += print_ascii(signals[i][1]
                                   [start_cycle:end_cycle], -(i * 2), color)
         output += "\\node [left] at (0,{}) {{{}}};\n".format(-(i *
-                                                             2) + 0.5, label.replace('_', '\\_'))
+                                                               2) + 0.5, label.replace('_', '\\_'))
     output += "\\end{tikzpicture}\n"
     output += "\\end{figure}\n\n"
     return output
@@ -75,7 +75,7 @@ def draw(signals: SignalStore, start: Timestamp, end: Timestamp):
         delimiter_values = [BoolValue('0')] * cycles
     delimited = True
     for i in range(cycles):
-        if (delimiter_values[i] == BoolValue('1') and delimiter_values[i-1] == BoolValue('1') and not delimited):
+        if (delimiter_values[i] == BoolValue('1') and delimiter_values[i - 1] == BoolValue('1') and not delimited):
             figures.append(figure(combined, cycles, last_print_cycle, i + 1))
             last_print_cycle = i + 1
             delimited = True

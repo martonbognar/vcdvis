@@ -1,12 +1,13 @@
 from enum import Enum
 from functools import reduce
-from timestamp import Timestamp, Unit
+
+from timestamp import Timestamp
 from value import BoolValue, AsciiValue, AsciiArray, BoolArray
 
 
 class SignalType(Enum):
-    WIRE  = "wire"
-    HEX   = "hex"
+    WIRE = "wire"
+    HEX = "hex"
     ASCII = "ascii"
 
 
@@ -78,7 +79,6 @@ class Signal:
             return AsciiArray(result)
         if self.type == SignalType.WIRE:
             return BoolArray(result)
-
 
 
 class CompoundSignal(Signal):

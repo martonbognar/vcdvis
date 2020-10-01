@@ -1,5 +1,5 @@
-from enum import Enum
 import re
+from enum import Enum
 
 
 class Unit(Enum):
@@ -60,5 +60,6 @@ class Timestamp:
     def __mul__(self, number: int):
         value = self.value * number
         return Timestamp(value, self.unit)
+
 
 t_0 = Timestamp(0, Unit.SECOND)

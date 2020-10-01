@@ -1,6 +1,7 @@
 import io
 import re
-from signal import Signal, SignalStore
+
+from signal import SignalStore
 from timestamp import Timestamp, Unit
 
 
@@ -35,7 +36,8 @@ def set_ids(file: io.TextIOWrapper, signals: SignalStore):
                         if timescale_on_next:
                             timescale_on_next = False
                             timescale_inline_match = re.match(r'\s*(?P<value>\d+)(?P<unit>\w+)', line)
-                        signals.update_timescale(Timestamp(int(timescale_inline_match.group('value')), Unit(timescale_inline_match.group('unit'))))
+                        signals.update_timescale(Timestamp(int(timescale_inline_match.group('value')),
+                                                           Unit(timescale_inline_match.group('unit'))))
                     else:
                         if line.startswith("$timescale"):
                             timescale_on_next = True

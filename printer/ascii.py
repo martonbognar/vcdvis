@@ -1,6 +1,6 @@
 from signal import SignalStore
 from timestamp import Timestamp
-from value import Value, ValueArray
+from value import ValueArray
 
 
 def draw_signal(label: str, values: ValueArray, padding: int):
