@@ -1,9 +1,10 @@
 import string
+from abc import ABC
 
 import timestamp
 
 
-class Value:
+class Value(ABC):
     def __init__(self, value, timestamp):
         self.value = value
         self.timestamp = timestamp
@@ -46,7 +47,7 @@ class BoolValue(Value):
             return
             # todo: proper solution
         int_value = int(value)
-        if (int_value not in [0, 1]):
+        if int_value not in [0, 1]:
             raise ValueError("Incorrect value for a bool signal: " + value)
         self.value = int_value
 
@@ -77,6 +78,21 @@ class AsciiValue(Value):
         return self.value
 
 
+class HexValue(Value):
+    def __init__(self, value, timestamp=timestamp.t_0):
+        self.timestamp = timestamp
+        if value == 'x':
+            self.value = 0
+            return
+            # todo: proper solution
+        # value should be in the form ?b?010110101...
+        int_val = int(value, 2)
+        self.value = hex(int_val)
+
+    def __str__(self):
+        return self.value
+
+
 class BoolArray(ValueArray):
     def __init__(self, values: [BoolValue]):
         self.values = values
@@ -98,7 +114,34 @@ class AsciiArray(ValueArray):
                 if index == length - 1:
                     index += 1
                 period = index - boundary
-                cutoff = str(self.values[boundary]).center(period)[:period]
+                text = str(self.values[boundary])
+                if len(text) > period:
+                    cutoff = text[:period - 1] + "…"
+                else:
+                    cutoff = text.ljust(period)
+                output += cutoff
+                boundary = index
+        return output
+
+
+class HexArray(ValueArray):
+    def __init__(self, values: [AsciiValue]):
+        self.values = values
+
+    def print_ascii(self) -> str:
+        length = len(self.values)
+        boundary = 0
+        output = ""
+        for (index, value) in enumerate(self.values):
+            if value != self.values[boundary] or index == length - 1:
+                if index == length - 1:
+                    index += 1
+                period = index - boundary
+                text = str(self.values[boundary])
+                if len(text) > period:
+                    cutoff = text[:period - 1] + "…"
+                else:
+                    cutoff = text.ljust(period)
                 output += cutoff
                 boundary = index
         return output

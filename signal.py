@@ -2,7 +2,7 @@ from enum import Enum
 from functools import reduce
 
 from timestamp import Timestamp
-from value import BoolValue, AsciiValue, AsciiArray, BoolArray
+from value import BoolValue, AsciiValue, AsciiArray, BoolArray, HexValue, HexArray
 
 
 class SignalType(Enum):
@@ -46,6 +46,8 @@ class Signal:
             val = BoolValue(value, timestamp)
         if self.type == SignalType.ASCII:
             val = AsciiValue(value, timestamp)
+        if self.type == SignalType.HEX:
+            val = HexValue(value, timestamp)
         self.values.append(val)
 
     def get_last_n_values(self, n: int):
@@ -53,6 +55,8 @@ class Signal:
             return AsciiArray(self.values[-n:])
         if self.type == SignalType.WIRE:
             return BoolArray(self.values[-n:])
+        if self.type == SignalType.HEX:
+            return HexArray(self.values[-n:])
         raise ValueError("Incorrect type")
 
     def get_values_between(self, start: Timestamp, end: Timestamp, step: Timestamp):
@@ -69,7 +73,7 @@ class Signal:
                 result.append(self.values[index])
                 index += 1
             else:
-                if result != []:
+                if result:
                     result.append(result[-1])
                 else:
                     result.append(initial_value)
@@ -79,6 +83,8 @@ class Signal:
             return AsciiArray(result)
         if self.type == SignalType.WIRE:
             return BoolArray(result)
+        if self.type == SignalType.HEX:
+            return HexArray(result)
 
 
 class CompoundSignal(Signal):
@@ -109,7 +115,7 @@ class CompoundSignal(Signal):
 
     def get_id(self):
         for signal in self.signals:
-            if signal.get_id() == None:
+            if signal.get_id() is None:
                 return None
         return ""
 

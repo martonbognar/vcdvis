@@ -1,11 +1,12 @@
 import io
 import re
+from typing import TextIO
 
 from signal import SignalStore
 from timestamp import Timestamp, Unit
 
 
-def set_ids(file: io.TextIOWrapper, signals: SignalStore):
+def set_ids(file: TextIO, signals: SignalStore):
     upscope_str = r'\$scope (?P<type>\w+) (?P<name>\w+) \$end'
     downscope_str = r'\$upscope \$end'
     var_str = r'\$var (?P<type>\w+) \d+ (?P<id>\S+) (?P<name>\w+)( \[\d+:0\])? \$end'
@@ -44,12 +45,13 @@ def set_ids(file: io.TextIOWrapper, signals: SignalStore):
                         else:
                             if line.startswith("$dumpvars"):
                                 for signal in signals.combined():
-                                    if signal.get_id() == None:
+                                    if signal.get_id() is None:
                                         raise ValueError("A signal (" + signal.get_label() + ") has no ids")
+                                print("IDs collected for {}...".format(file.name))
                                 return
 
 
-def load_values(file: io.TextIOWrapper, signals: SignalStore):
+def load_values(file: TextIO, signals: SignalStore):
     timestamp = Timestamp(0, Unit.SECOND)
     for line in file:
         if line.startswith('#'):
@@ -61,6 +63,7 @@ def load_values(file: io.TextIOWrapper, signals: SignalStore):
                 for signal in signals.combined():
                     if signal.id_match(iden):
                         signal.append_value(iden, timestamp, match.group('value'))
+    print("Data collected for {}...".format(file.name))
 
 
 def parse_vcd(vcd_file: str, signals: SignalStore):
