@@ -39,7 +39,7 @@ def print_wire(arr, offset, color) -> str:
 def figure(signals: [(Signal, [Value])], total_cycles, start_cycle, end_cycle) -> str:
     output = ""
     output += "\\begin{figure}[h]\n"
-    output += "\\begin{tikzpicture}[yscale=0.5]\n"
+    output += "\\begin{tikzpicture}[yscale=0.5, xscale=0.5]\n"
     for i in range((end_cycle - start_cycle) // 2):
         output += "\\node at ({0}, {1}) {{\\footnotesize {2}}};\n".format(
             i * 2 + 1, 2, i + 1)
@@ -75,7 +75,7 @@ def draw(signals: SignalStore, start: Timestamp, end: Timestamp):
         delimiter_values = [BoolValue('0')] * cycles
     delimited = True
     for i in range(cycles):
-        if (delimiter_values[i] == BoolValue('1') and delimiter_values[i - 1] == BoolValue('1') and not delimited):
+        if delimiter_values[i] == BoolValue('1') and delimiter_values[i - 1] == BoolValue('1') and not delimited:
             figures.append(figure(combined, cycles, last_print_cycle, i + 1))
             last_print_cycle = i + 1
             delimited = True
