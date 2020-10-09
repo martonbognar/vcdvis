@@ -1,0 +1,29 @@
+{
+  "file_path": "/home/marton/tb_openMSP430.vcd",
+  "clk_signal": "tb_openMSP430.mclk",
+  "signals": [
+    {
+      "name": "tb_openMSP430.dut.mem_backbone_0.dma_addr",
+      "color": "red",
+      "label": "dma_addr",
+      "type": "hex"
+    },
+    {
+      "name": "tb_openMSP430.dut.mem_backbone_0.dma_dout",
+      "color": "orange",
+      "label": "dma_dout",
+      "type": "hex"
+    },
+    {
+        "name": ["tb_openMSP430.dut.mem_backbone_0.fe_pmem_en", "tb_openMSP430.dut.mem_backbone_0.eu_pmem_en"],
+        "color": "green",
+        "label": "program memory"
+    },
+    {
+        "name": "tb_openMSP430.inst_full",
+        "label": "instruction",
+        "color": "lightgray",
+        "type": "ascii"
+    }
+  ]
+}
