@@ -9,27 +9,32 @@ vcdvis is still very much a work in progress, feel free to submit issues or pull
 
 ```bash
 $ ./vcdvis.py -h
-usage: vcdvis.py [-h] [-c CONFIG] [-f FILE] cycles {latex,ascii,both}
+usage: vcdvis.py [-h] (-cycles CYCLES | -start_tick START) [-end_tick END] [-c CONFIG] [-f FILE] {latex,ascii,both}
 
 Visualize a VCD waveform as ASCII or convert to a tikz figure.
 
 positional arguments:
-  cycles              the number of clock cycles AT THE END of the simulation
-                      to include in the output
   {latex,ascii,both}  the output type
 
 optional arguments:
   -h, --help          show this help message and exit
+  -cycles CYCLES      the number of clock cycles AT THE END of the simulation to include in the output
+  -start_tick START   the starting tick from the simulation to be included, e.g. 120ns
+  -end_tick END       the final tick from the simulation to be included, e.g. 180ns
   -c CONFIG           configuration file (default: config.json)
-  -f FILE             the VCD file to parse (default: taken from the config
-                      file)
+  -f FILE             the VCD file to parse (default: taken from the config file)
 ```
 
+You can specify the timeframe you want to visualize two different ways:
+1. By supplying the `-cycles N` argument. This will plot the final N clock cycles from the simulation.
 Tip: if the simulation ends in the middle of a cycle (only one half of a cycle
 is included at the end), you can provide a decimal `cycles` argument to offset
 this effect so that the visualization doesn't also start in the middle of a
 cycle, e.g. `57.5` if you want to visualize 57 cycles but a half extra cycle is
 included at the end of the VCD file.
+2. By supplying the `-start_tick TICK` and optionally the `-end_tick TICK` arguments.
+Running `./vcdvis.py ascii -start_tick 131890ns -end_tick 132234ns` will visualize the selected signals
+between the two specified timestamps (you can get these timestamps from GTKWave for example).
 
 ## config.json
 
@@ -42,9 +47,9 @@ The following fields can be set in the config file:
     + `name`: the name of the signal in the VCD file. This can also be an array, in that case for each cycle the output value will be the maximum of the given signals. This can be useful if for example you want to track whether any of a number of flags have been triggered.
     + `color`: a valid TikZ color, if the output is `latex`, this will be the color of the signal on the figure
     + `label`: the pretty name of the signal in the output, defaults to the name[s] of the signal[s]
-    + `type`: type of the signal, possible values for now are `wire` (0/1) and `ascii` (default is `wire`)
+    + `type`: type of the signal, possible values for now are `wire` (0/1), `hex`, and `ascii` (default is `wire`)
 
-For a complete example, see the [config file](config.json) included in this repository.
+For a complete example, see the [config file](config.json.example) included in this repository.
 
 ## Example
 
@@ -52,10 +57,10 @@ Given the following waveform file:
 
 ![](https://i.imgur.com/qEUzd5q.png)
 
-We can issue the following command (using the default `config.json` provided in the repo):
+We can issue the following command:
 
 ```bash
-$ ./vcdvis.py 20 latex -f /tmp/vcd/jmp_single.vcd > output.tex
+$ ./vcdvis.py -cycles 20 latex -f /tmp/vcd/jmp_single.vcd > output.tex
 ```
 
 This means that we want to plot the execution during last 20 clock cycles in the simulation.
@@ -70,11 +75,11 @@ If we omit the delimiter signal from the config file, we will get the following 
 Alternatively, if we want to plot the execution in ASCII to get a quick look, we can do:
 
 ```bash
-$ ./vcdvis.py 20 ascii -f /tmp/vcd/jmp_single.vcd
+$ ./vcdvis.py -cycles 20 ascii -f /tmp/vcd/jmp_single.vcd
 mclk                 █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █
 data memory              ██  ██
 program memory       ████    ██████  ████    ████████████  █
 peripheral           ██                  ██  ██
-instruction         ████████████████████████████████████████
+instruction         SX…SXT &EDE                MOV #N, r15
 exec_done            ██      ██      ██      ██  ██  ██  ███
 ```
