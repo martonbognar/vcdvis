@@ -54,6 +54,9 @@ def figure(signals: [(Signal, [Value])], total_cycles, start_cycle, end_cycle) -
         elif ty == SignalType.ASCII:
             output += print_ascii(signals[i][1]
                                   [start_cycle:end_cycle], -(i * 2), color)
+        elif ty == SignalType.HEX:
+            output += print_ascii(signals[i][1]
+                                  [start_cycle:end_cycle], -(i * 2), color)
         output += "\\node [left] at (0,{}) {{{}}};\n".format(-(i *
                                                                2) + 0.5, label.replace('_', '\\_'))
     output += "\\end{tikzpicture}\n"
