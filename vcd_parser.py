@@ -7,7 +7,7 @@ from timestamp import Timestamp, Unit
 
 
 def set_ids(file: TextIO, signals: SignalStore):
-    upscope_str = r'\$scope (?P<type>\w+) (?P<name>\w+) \$end'
+    upscope_str = r'\$scope (?P<type>\S+) (?P<name>\S+) \$end'
     downscope_str = r'\$upscope \$end'
     var_str = r'\$var (?P<type>\w+) \d+ (?P<id>\S+) (?P<name>\w+)( \[\d+:\d+\])? \$end'
     timescale_inline_str = r'\$timescale (?P<value>\d+)(?P<unit>\w+)'

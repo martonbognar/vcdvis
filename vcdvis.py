@@ -96,9 +96,13 @@ if __name__ == '__main__':
         signals = gather_signals(cfg)
         vcd_parser.parse_vcd(cfg['file_path'], signals)
 
-        if args.start is not None and args.end is not None:
+        if args.start is not None:
             start = Timestamp.from_string(args.start)
-            end = Timestamp.from_string(args.end)
+            if args.end is None:
+                values = signals.clk.get_last_n_values(1)
+                end = values[-1].get_timestamp()
+            else:
+                end = Timestamp.from_string(args.end)
 
         if args.cycles is not None:
             cycles = int(args.cycles * 2)
