@@ -57,12 +57,12 @@ def load_values(file: TextIO, signals: SignalStore):
         if line.startswith('#'):
             timestamp = signals.get_timescale() * int(line[1:])
         else:
-            match = re.match(r'[b]?(?P<value>([\d]+|x))[ ]?(?P<id>\S+)$', line)
+            match = re.match(r'(?P<value>(b[x01]+[ ]|[x01]))?(?P<id>\S+)$', line)
             if match:
                 iden = match.group('id')
                 for signal in signals.combined():
                     if signal.id_match(iden):
-                        signal.append_value(iden, timestamp, match.group('value'))
+                        signal.append_value(iden, timestamp, match.group('value').strip())
     print("Data collected for {}...".format(file.name))
 
 

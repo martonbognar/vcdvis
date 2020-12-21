@@ -61,7 +61,8 @@ class BoolValue(Value):
 class AsciiValue(Value):
     def __init__(self, value, timestamp=timestamp.t_0):
         self.timestamp = timestamp
-        if value == 'x':
+        value = value[1:]  # cut the b
+        if 'x' in value:
             self.value = 0
             return
             # todo: proper solution
@@ -81,7 +82,8 @@ class AsciiValue(Value):
 class HexValue(Value):
     def __init__(self, value, timestamp=timestamp.t_0):
         self.timestamp = timestamp
-        if value == 'x':
+        value = value[1:]  # cut the b
+        if 'x' in value:
             self.value = 0
             return
             # todo: proper solution
