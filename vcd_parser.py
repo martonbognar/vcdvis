@@ -2,7 +2,7 @@ import io
 import re
 from typing import TextIO
 
-from signal import SignalStore
+from vcd_signal import SignalStore
 from timestamp import Timestamp, Unit
 
 

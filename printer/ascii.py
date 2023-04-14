@@ -1,4 +1,4 @@
-from signal import SignalStore
+from vcd_signal import SignalStore
 from timestamp import Timestamp
 from value import ValueArray
 

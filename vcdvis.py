@@ -6,7 +6,7 @@ import json
 import printer.ascii as PA
 import printer.latex as PL
 import vcd_parser
-from signal import Signal, CompoundSignal, SignalStore
+from vcd_signal import Signal, CompoundSignal, SignalStore
 from timestamp import Timestamp
 
 

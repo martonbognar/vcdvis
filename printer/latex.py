@@ -1,4 +1,4 @@
-from signal import SignalType, SignalStore, Signal
+from vcd_signal import SignalType, SignalStore, Signal
 from timestamp import Timestamp
 from value import Value, BoolValue
 
