@@ -1,5 +1,6 @@
 import io
 import re
+import sys
 from typing import TextIO
 
 from vcd_signal import SignalStore
@@ -47,7 +48,7 @@ def set_ids(file: TextIO, signals: SignalStore):
                                 for signal in signals.combined():
                                     if signal.get_id() is None:
                                         raise ValueError("A signal (" + signal.get_label() + ") has no ids")
-                                print("IDs collected for {}...".format(file.name))
+                                print("IDs collected for {}...".format(file.name), file=sys.stderr)
                                 return
 
 

@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import sys
 
 import printer.ascii as PA
 import printer.latex as PL
@@ -79,7 +80,7 @@ def gather_signals(config) -> SignalStore:
                     color=signal['color'],
                 )
             )
-    print("Gathered signals...")
+    print("Gathered signals...", file=sys.stderr)
     return SignalStore(clk=clk, delimiter=delimiter, signals=signals)
 
 
@@ -134,7 +135,7 @@ if __name__ == '__main__':
             start = values[0].get_timestamp()
             end = values[-1].get_timestamp()
 
-        print("Starting compare...")
+        print("Starting compare...", file=sys.stderr)
         selected = {}
         for key in signals:
             data = signals[key].get_values_between(start, end)
@@ -143,4 +144,4 @@ if __name__ == '__main__':
                     if data[i][1] != selected[other_key][i][1]:
                         print("Mismatch for signal", data[i][0].get_label())
             selected[key] = data
-        print("Finished comparing")
+        print("Finished comparing", file=sys.stderr)

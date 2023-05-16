@@ -38,8 +38,6 @@ def print_wire(arr, offset, color) -> str:
 
 def figure(signals: [(Signal, [Value])], total_cycles, start_cycle, end_cycle) -> str:
     output = ""
-    output += "\\begin{figure}[h]\n"
-    output += "\\begin{tikzpicture}[yscale=0.5, xscale=0.5]\n"
     for i in range((end_cycle - start_cycle) // 2):
         output += "\\node at ({0}, {1}) {{\\footnotesize {2}}};\n".format(
             i * 2 + 1, 2, i + 1)
@@ -59,8 +57,6 @@ def figure(signals: [(Signal, [Value])], total_cycles, start_cycle, end_cycle) -
                                   [start_cycle:end_cycle], -(i * 2), color)
         output += "\\node [left] at (0,{}) {{{}}};\n".format(-(i *
                                                                2) + 0.5, label.replace('_', '\\_'))
-    output += "\\end{tikzpicture}\n"
-    output += "\\end{figure}\n\n"
     return output
 
 
