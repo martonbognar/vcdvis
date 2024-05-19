@@ -36,7 +36,7 @@ def print_wire(arr, offset, color) -> str:
     return output
 
 
-def figure(signals: [(Signal, [Value])], total_cycles, start_cycle, end_cycle) -> str:
+def figure(signals: list[tuple[Signal, list[Value]]], total_cycles, start_cycle, end_cycle) -> str:
     output = ""
     for i in range((end_cycle - start_cycle) // 2):
         output += "\\node at ({0}, {1}) {{\\footnotesize {2}}};\n".format(

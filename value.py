@@ -1,5 +1,6 @@
 import string
 from abc import ABC
+from typing import List
 
 import timestamp
 
@@ -96,7 +97,7 @@ class HexValue(Value):
 
 
 class BoolArray(ValueArray):
-    def __init__(self, values: [BoolValue]):
+    def __init__(self, values: List[BoolValue]):
         self.values = values
 
     def print_ascii(self) -> str:
@@ -104,7 +105,7 @@ class BoolArray(ValueArray):
 
 
 class AsciiArray(ValueArray):
-    def __init__(self, values: [AsciiValue]):
+    def __init__(self, values: List[AsciiValue]):
         self.values = values
 
     def print_ascii(self) -> str:
@@ -127,7 +128,7 @@ class AsciiArray(ValueArray):
 
 
 class HexArray(ValueArray):
-    def __init__(self, values: [AsciiValue]):
+    def __init__(self, values: List[AsciiValue]):
         self.values = values
 
     def print_ascii(self) -> str:

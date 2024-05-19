@@ -1,5 +1,6 @@
 from enum import Enum
 from functools import reduce
+from typing import List
 
 from timestamp import Timestamp
 from value import BoolValue, AsciiValue, AsciiArray, BoolArray, HexValue, HexArray
@@ -88,7 +89,7 @@ class Signal:
 
 
 class CompoundSignal(Signal):
-    def __init__(self, signals: [Signal], label: str = None, color: str = "black"):
+    def __init__(self, signals: List[Signal], label: str = None, color: str = "black"):
         self.signals = signals
         for signal in signals:
             if signal.get_type() != SignalType.WIRE:
@@ -149,7 +150,7 @@ class CompoundSignal(Signal):
 
 
 class SignalStore:
-    def __init__(self, clk: Signal, delimiter: Signal = None, signals: [Signal] = [], timescale: Timestamp = None):
+    def __init__(self, clk: Signal, delimiter: Signal = None, signals: List[Signal] = [], timescale: Timestamp = None):
         self.clk = clk
         self.delimiter = delimiter
         self.signals = signals
