@@ -8,15 +8,16 @@ from timestamp import Timestamp, Unit
 
 
 def set_ids(file: TextIO, signals: SignalStore):
-    upscope_str = r'\$scope (?P<type>\S+) (?P<name>\S+) \$end'
-    downscope_str = r'\$upscope \$end'
-    var_str = r'\$var (?P<type>\w+) \d+ (?P<id>\S+) (?P<name>\w+)( \[\d+:\d+\])? \$end'
-    timescale_inline_str = r'\$timescale (?P<value>\d+)(?P<unit>\w+)'
+    upscope_str = r'\$scope\s+(?P<type>\S+)\s+(?P<name>\S+)\s+\$end'
+    downscope_str = r'\$upscope\s+\$end'
+    var_str = r'\$var\s*(?P<type>\w+)\s*\d+\s*(?P<id>\S+)\s*(?P<name>\w+)(\s*\[\d+:\d+\])?\s*\$end'
+    timescale_inline_str = r'\$timescale\s+(?P<value>\d+)(?P<unit>\w+)'
 
     timescale_on_next = False
 
     scopes = []
     for line in file:
+        line = line.strip()
         var_match = re.match(var_str, line)
         if var_match:
             name = ".".join(scopes + [var_match.group('name')])
@@ -44,27 +45,29 @@ def set_ids(file: TextIO, signals: SignalStore):
                         if line.startswith("$timescale"):
                             timescale_on_next = True
                         else:
-                            if line.startswith("$dumpvars"):
-                                for signal in signals.combined():
-                                    if signal.get_id() is None:
-                                        raise ValueError("A signal (" + signal.get_label() + ") has no ids")
-                                print("IDs collected for {}...".format(file.name), file=sys.stderr)
-                                return
+                            if line.startswith("$dumpvars") or line.startswith("$enddefinitions"):
+                                break
+
+    for signal in signals.combined():
+        if signal.get_id() is None:
+            raise ValueError("A signal (" + signal.get_label() + ") has no ids")
+    print("IDs collected for {}...".format(file.name), file=sys.stderr)
 
 
 def load_values(file: TextIO, signals: SignalStore):
     timestamp = Timestamp(0, Unit.SECOND)
     for line in file:
+        line = line.strip()
         if line.startswith('#'):
             timestamp = signals.get_timescale() * int(line[1:])
         else:
-            match = re.match(r'(?P<value>(b[x01]+[ ]|[x01]))?(?P<id>\S+)$', line)
+            match = re.match(r'(?P<value>(b[x01]+\s+|[x01]))?(?P<id>\S+)$', line)
             if match:
                 iden = match.group('id')
                 for signal in signals.combined():
                     if signal.id_match(iden):
                         signal.append_value(iden, timestamp, match.group('value').strip())
-    print("Data collected for {}...".format(file.name))
+    print("Data collected for {}...".format(file.name), file=sys.stderr)
 
 
 def parse_vcd(vcd_file: str, signals: SignalStore):
