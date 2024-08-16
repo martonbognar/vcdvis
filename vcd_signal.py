@@ -43,6 +43,8 @@ class Signal:
         return self.id == iden
 
     def append_value(self, iden: str, timestamp: Timestamp, value: str):
+        if value.startswith('b'):
+            value = value[1:]
         if self.type == SignalType.WIRE:
             val = BoolValue(value, timestamp)
         if self.type == SignalType.ASCII:
