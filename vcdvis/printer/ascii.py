@@ -1,6 +1,6 @@
-from vcd_signal import SignalStore
-from timestamp import Timestamp
-from value import ValueArray
+from vcdvis.vcd_signal import SignalStore
+from vcdvis.timestamp import Timestamp
+from vcdvis.value import ValueArray
 
 
 def draw_signal(label: str, values: ValueArray, padding: int):

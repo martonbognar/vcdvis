@@ -1,6 +1,6 @@
-from vcd_signal import SignalType, SignalStore, Signal
-from timestamp import Timestamp
-from value import Value, BoolValue
+from vcdvis.vcd_signal import SignalType, SignalStore, Signal
+from vcdvis.timestamp import Timestamp
+from vcdvis.value import Value, BoolValue
 
 
 def print_ascii(arr, offset, color) -> str:

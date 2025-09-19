@@ -2,7 +2,7 @@ import string
 from abc import ABC
 from typing import List
 
-import timestamp
+import vcdvis.timestamp
 
 
 class Value(ABC):
@@ -41,7 +41,7 @@ class ValueArray:
 
 
 class BoolValue(Value):
-    def __init__(self, value, timestamp=timestamp.t_0):
+    def __init__(self, value, timestamp=vcdvis.timestamp.t_0):
         self.timestamp = timestamp
         if value == 'x':
             self.value = 0
@@ -60,7 +60,7 @@ class BoolValue(Value):
 
 
 class AsciiValue(Value):
-    def __init__(self, value, timestamp=timestamp.t_0):
+    def __init__(self, value, timestamp=vcdvis.timestamp.t_0):
         self.timestamp = timestamp
         if 'x' in value:
             self.value = 0
@@ -80,7 +80,7 @@ class AsciiValue(Value):
 
 
 class HexValue(Value):
-    def __init__(self, value, timestamp=timestamp.t_0):
+    def __init__(self, value, timestamp=vcdvis.timestamp.t_0):
         self.timestamp = timestamp
         if 'x' in value:
             self.value = 0
