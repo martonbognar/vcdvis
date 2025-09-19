@@ -54,7 +54,7 @@ def get_parser():
     return parser.parse_args()
 
 
-def gather_signals(config) -> SignalStore:
+def gather_signals(cfg) -> SignalStore:
     clk = Signal(cfg['clk_signal'])
     delimiter = Signal(cfg['delimiter']) if 'delimiter' in cfg else None
     signals = []
