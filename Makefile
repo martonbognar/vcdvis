@@ -18,6 +18,7 @@ test-install:
 	@./test-venv/bin/python -m pip install dist/vcdvis*.whl
 	@./test-venv/bin/vcdvis --help
 	$(MAKE) clean
+	@echo "Build ok."
 
 .PHONY: clean
 clean:
