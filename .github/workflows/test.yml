@@ -3,11 +3,6 @@ name: Tests
 on:
   workflow_call:
 
-# Only allow one workflow run per PR at a time
-concurrency:
-  group: ${{ github.ref_name }}-${{ github.workflow }}
-  cancel-in-progress: true
-
 jobs:
   test:
     runs-on: ubuntu-latest
