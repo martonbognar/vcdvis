@@ -1,8 +1,6 @@
 name: CI
 
 on:
-  # TODO: leave only on PRs
-  push: {branches: ['*']}
   pull_request: {branches: ['*']}
 
 # Only allow one workflow run per PR at a time
@@ -58,3 +56,8 @@ jobs:
 
     - name: Test package installation
       run: make test-install
+
+  test-unit:
+    needs: test-install
+    uses: ./.github/workflows/test.yml
+

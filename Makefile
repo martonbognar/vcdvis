@@ -2,9 +2,30 @@
 help:
 	@echo "Available commands:"
 	@echo "    help          - Show this help message"
+	@echo "    setup         - Set up development environment (PYTHON_VERSION=$(PYTHON_VERSION))"
+	@echo "    test          - Run tests"
 	@echo "    build         - Build the package"
 	@echo "    clean         - Remove build artifacts"
 	@echo "    test-install  - Test that package is installable"
+
+##############
+# Develpment #
+##############
+
+PYTHON_VERSION ?= 3.9
+
+.PHONY: setup
+setup:
+	uv python install python$(PYTHON_VERSION)
+	uv sync --dev
+
+.PHONY: test
+test:
+	uv run --python python$(PYTHON_VERSION) pytest -v
+
+#############
+# Packaging #
+#############
 
 .PHONY: build
 build:

@@ -1,0 +1,32 @@
+name: Tests
+
+on:
+  workflow_call:
+
+# Only allow one workflow run per PR at a time
+concurrency:
+  group: ${{ github.ref_name }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+    - uses: actions/checkout@v5
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        version: "latest"
+
+    - name: Set up Python
+      run: |
+        make setup PYTHON_VERSION=${{ matrix.python-version }}
+
+    - name: Run tests
+      run: |
+        make test PYTHON_VERSION=${{ matrix.python-version }}
