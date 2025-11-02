@@ -5,10 +5,25 @@ The tool is clock cycle based, async signals will not work properly.
 
 vcdvis is still very much a work in progress, feel free to submit issues or pull requests!
 
+## Install
+
+Install the package as a tool with your preferred method:
+
+```bash
+# Using uv (recommended)
+uv tool install git+https://github.com/martonbognar/vcdvis.git
+
+# Using pipx
+pipx install git+https://github.com/martonbognar/vcdvis.git
+
+# Using pip
+pip install --user git+https://github.com/martonbognar/vcdvis.git
+```
+
 ## Usage
 
 ```bash
-$ ./vcdvis.py -h
+$ vcdvis -h
 usage: vcdvis.py [-h] (-cycles CYCLES | -start_tick START) [-end_tick END] [-c CONFIG] [-f FILE] {latex,ascii,both}
 
 Visualize a VCD waveform as ASCII or convert to a tikz figure.
@@ -36,9 +51,10 @@ included at the end of the VCD file.
 Running `./vcdvis.py ascii -start_tick 131890ns -end_tick 132234ns` will visualize the selected signals
 between the two specified timestamps (you can get these timestamps from GTKWave for example).
 
-## config.json
+## Configuration
 
-The following fields can be set in the config file:
+The cli uses a json configuration file that defaults to `./config.json`.
+The following fields can be set:
 
 - `file_path`: the path to the VCD file (can be overwritten by the command line argument `-f`)
 - `clk_signal`: the name of the signal that should be considered the system clock
@@ -60,7 +76,7 @@ Given the following waveform file:
 We can issue the following command:
 
 ```bash
-$ ./vcdvis.py -cycles 20 latex -f /tmp/vcd/jmp_single.vcd > output.tex
+$ vcdvis -cycles 20 latex -f /tmp/vcd/jmp_single.vcd > output.tex
 ```
 
 This means that we want to plot the execution during last 20 clock cycles in the simulation.
@@ -75,11 +91,34 @@ If we omit the delimiter signal from the config file, we will get the following 
 Alternatively, if we want to plot the execution in ASCII to get a quick look, we can do:
 
 ```bash
-$ ./vcdvis.py -cycles 20 ascii -f /tmp/vcd/jmp_single.vcd
+$ vcdvis -cycles 20 ascii -f /tmp/vcd/jmp_single.vcd
 mclk                 █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █
 data memory              ██  ██
 program memory       ████    ██████  ████    ████████████  █
 peripheral           ██                  ██  ██
 instruction         SX…SXT &EDE                MOV #N, r15
 exec_done            ██      ██      ██      ██  ██  ██  ███
+```
+
+## Contributing
+
+To contribute with code, make sure you have [uv](https://docs.astral.sh/uv/getting-started/installation/) installed.
+
+Assuming your bugfix/feature request was previously discussed in an issue, a typical workflow may look like:
+
+1. Create a fork in github
+2. Checkout the repository locally and create a new branch
+3. Make your code changes and add tests if possible
+4. Run `make test`  and make sure it's green
+5. Push changes to your fork and open a PR
+
+The `Makefile` contain other useful command as well which are used in CI.
+For example, you can run `make build` and `make test-install` to test packging.
+In general, `make test` should be enough for the automated tests.
+
+To play around manually with the development source, you may install directly from your local checkout.
+E.g:
+
+```bash
+uv tool install -e $LOCAL_REPOSITORY_PATH
 ```

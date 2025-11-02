@@ -2,8 +2,8 @@ from enum import Enum
 from functools import reduce
 from typing import List
 
-from timestamp import Timestamp
-from value import BoolValue, AsciiValue, AsciiArray, BoolArray, HexValue, HexArray
+from vcdvis.timestamp import Timestamp
+from vcdvis.value import BoolValue, AsciiValue, AsciiArray, BoolArray, HexValue, HexArray
 
 
 class SignalType(Enum):

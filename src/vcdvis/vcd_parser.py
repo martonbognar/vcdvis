@@ -3,8 +3,8 @@ import re
 import sys
 from typing import TextIO
 
-from vcd_signal import SignalStore
-from timestamp import Timestamp, Unit
+from vcdvis.vcd_signal import SignalStore
+from vcdvis.timestamp import Timestamp, Unit
 
 
 def set_ids(file: TextIO, signals: SignalStore):

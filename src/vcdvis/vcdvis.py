@@ -4,11 +4,11 @@ import argparse
 import json
 import sys
 
-import printer.ascii as PA
-import printer.latex as PL
-import vcd_parser
-from vcd_signal import Signal, CompoundSignal, SignalStore
-from timestamp import Timestamp
+import vcdvis.printer.ascii as PA
+import vcdvis.printer.latex as PL
+import vcdvis.vcd_parser
+from vcdvis.vcd_signal import Signal, CompoundSignal, SignalStore
+from vcdvis.timestamp import Timestamp
 
 
 def get_parser():
@@ -54,7 +54,7 @@ def get_parser():
     return parser.parse_args()
 
 
-def gather_signals(config) -> SignalStore:
+def gather_signals(cfg) -> SignalStore:
     clk = Signal(cfg['clk_signal'])
     delimiter = Signal(cfg['delimiter']) if 'delimiter' in cfg else None
     signals = []
@@ -84,7 +84,7 @@ def gather_signals(config) -> SignalStore:
     return SignalStore(clk=clk, delimiter=delimiter, signals=signals)
 
 
-if __name__ == '__main__':
+def main():
     args = get_parser()
 
     with open(args.config) as file:
@@ -95,7 +95,7 @@ if __name__ == '__main__':
     if isinstance(cfg['file_path'], str):
         # one source file
         signals = gather_signals(cfg)
-        vcd_parser.parse_vcd(cfg['file_path'], signals)
+        vcdvis.vcd_parser.parse_vcd(cfg['file_path'], signals)
 
         if args.start is not None:
             start = Timestamp.from_string(args.start)
@@ -123,7 +123,7 @@ if __name__ == '__main__':
         signals = {}
         for file in cfg['file_path']:
             signals[file] = gather_signals(file)
-            vcd_parser.parse_vcd(file, signals[file])
+            vcdvis.vcd_parser.parse_vcd(file, signals[file])
 
         if args.start is not None and args.end is not None:
             start = Timestamp.from_string(args.start)
@@ -145,3 +145,7 @@ if __name__ == '__main__':
                         print("Mismatch for signal", data[i][0].get_label())
             selected[key] = data
         print("Finished comparing", file=sys.stderr)
+
+
+if __name__ == '__main__':
+    main()

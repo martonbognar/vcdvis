@@ -2,7 +2,7 @@ import string
 from abc import ABC
 from typing import List
 
-import timestamp
+from vcdvis import timestamp
 
 
 class Value(ABC):
